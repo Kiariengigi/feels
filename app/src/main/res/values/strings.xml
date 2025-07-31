@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Feels</string>
+    <string name="login_text">Login to your Account</string>
+    <string name="signup_text">Create an Account</string>
+    <string name="login_btn_text">Log in</string>
+    <string name="signup_btn_text">Sign Up</string>
+    <string name="feelings_tracker_main">How are you feeling today?</string>
+</resources>
