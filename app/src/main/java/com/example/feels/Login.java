@@ -10,6 +10,7 @@ import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -23,42 +24,47 @@ public class Login extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.login_screen);
 
+        // Set up clickable "Sign up" text
         TextView textView = findViewById(R.id.login_acc);
         String fullText = "Don’t have an account? Sign up";
         SpannableString spannable = new SpannableString(fullText);
 
-        // Make "Sign up" pink and clickable
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
-                TextView signuplink = findViewById(R.id.login_acc);
-                signuplink.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(Login.this, Sign_Up.class);
-                        startActivity(intent);
-                    }
-                });
+                Intent intent = new Intent(Login.this, Sign_Up.class);
+                startActivity(intent);
             }
 
             @Override
             public void updateDrawState(@NonNull TextPaint ds) {
                 super.updateDrawState(ds);
-                ds.setColor(Color.parseColor("#FF4081")); // Custom color
-                ds.setUnderlineText(false); // Remove underline if needed
+                ds.setColor(Color.parseColor("#FF4081")); // pink color
+                ds.setUnderlineText(false);
             }
         };
 
         int startIndex = fullText.indexOf("Sign up");
         int endIndex = startIndex + "Sign up".length();
-
         spannable.setSpan(clickableSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setText(spannable);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
 
-        SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("isLoggedIn", true); // Set to true when login is successful
-        editor.apply();
+        // Handle login button
+        Button openSecondButton = findViewById(R.id.log_in_btn);
+        openSecondButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Set shared preference as logged in
+                SharedPreferences sharedPreferences = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("isLoggedIn", true);
+                editor.apply();
+
+                // Go to next activity
+                Intent intent = new Intent(Login.this, Feelings_tracker.class);
+                startActivity(intent);
+            }
+        });
     }
 }
