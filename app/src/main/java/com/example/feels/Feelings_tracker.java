@@ -1,8 +1,15 @@
 package com.example.feels;
 
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.SeekBar;
+import android.widget.TextView;
+
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 public class Feelings_tracker extends AppCompatActivity {
 
     private SeekBar sentimentSeekBar;
+    private TextView sentimentValue;
     private CircleView blurrycircles;
 
     @Override
@@ -19,6 +27,7 @@ public class Feelings_tracker extends AppCompatActivity {
         setContentView(R.layout.feelings_tracker);
 
         sentimentSeekBar = findViewById(R.id.sentimentSeekBar);
+        sentimentValue = findViewById(R.id.sentimentValue);
         blurrycircles = findViewById(R.id.blurryCircles);
 
         sentimentSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -27,6 +36,9 @@ public class Feelings_tracker extends AppCompatActivity {
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 int color = getColorFromProgress(progress);  // You’ll define this method
                 blurrycircles.setColorofAllCircles(color);  // Add this method in CircleView
+                String sentiment = getSentimentLabel(progress);
+                sentimentValue.setText(sentiment);
+                sentimentSeekBar.setProgressDrawable(dynamicGradientTrack(color));
             }
 
             @Override public void onStartTrackingTouch(SeekBar seekBar) {
@@ -36,6 +48,29 @@ public class Feelings_tracker extends AppCompatActivity {
                 blurrycircles.setSpeedMultiplier(1.0f);
             }
         });
+
+        Button submitBtn = findViewById(R.id.button2);
+        submitBtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                int progress = sentimentSeekBar.getProgress();
+                String sentiment = getSentimentLabel(progress);
+
+                Intent intent = new Intent(Feelings_tracker.this, Notebook.class);
+                intent.putExtra("selected_sentiment", sentiment);
+                startActivity(intent);
+            }
+        });
+    }
+
+
+
+    private String getSentimentLabel(int progress){
+        if (progress < 25) return "Very Negative";
+        else if (progress < 50) return "Negative";
+        else if (progress < 75) return "Neutral";
+        else if (progress < 100) return "Positive";
+        else return "Very Positive";
     }
     private int getColorFromProgress(int progress) {
         // Simple gradient: Blue (0) → Green (50) → Red (100)
@@ -51,5 +86,15 @@ public class Feelings_tracker extends AppCompatActivity {
             return android.graphics.Color.rgb(red, green, 0);
         }
     }
+
+    private Drawable dynamicGradientTrack(int basecolor){
+        int[] colors = new int[]{0xFFB0E0E6, basecolor};
+        GradientDrawable gradient = new GradientDrawable(
+                GradientDrawable.Orientation.LEFT_RIGHT, colors);
+        gradient.setCornerRadius(4 * getResources().getDisplayMetrics().density);
+        gradient.setSize(400, 20);
+        return gradient;
+    }
+
 
 }
