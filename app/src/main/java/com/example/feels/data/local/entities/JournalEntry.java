@@ -4,12 +4,18 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import com.example.feels.data.local.converters.CategoryConverter;
+import com.example.feels.data.local.converters.DateConverter;
+import com.example.feels.data.local.converters.MoodConverter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 @Entity(tableName = "journal_entries")
+@TypeConverters({DateConverter.class, MoodConverter.class, CategoryConverter.class})
 public class JournalEntry {
 
     @PrimaryKey(autoGenerate = true)
@@ -23,7 +29,7 @@ public class JournalEntry {
     @NonNull
     private String content;
 
-    @ColumnInfo(name = "entry_date")
+    @ColumnInfo(name = "date")
     @NonNull
     private Date date;
 
@@ -35,19 +41,24 @@ public class JournalEntry {
     @NonNull
     private Category category;
 
-    // Constructor
+    @ColumnInfo(name = "user_id")
+    private int userId;  // Added for user-specific entries
+
+    // Updated constructor
     public JournalEntry(
             @NonNull String title,
             @NonNull String content,
             @NonNull Date date,
             @NonNull Mood mood,
-            @NonNull Category category
+            @NonNull Category category,
+            int userId
     ) {
         this.title = title;
         this.content = content;
         this.date = date;
         this.mood = mood;
         this.category = category;
+        this.userId = userId;
     }
 
     // Getters and Setters
@@ -68,6 +79,9 @@ public class JournalEntry {
 
     @NonNull
     public Date getDate() { return date; }
+
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
 
     // Helper Methods
     public String getMoodAsString() {
