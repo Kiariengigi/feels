@@ -60,7 +60,12 @@ public class splash_screen extends AppCompatActivity {
                                                 SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
                                                 boolean isLoggedIn = false;
 
-                                                    startActivity(new Intent(this, Feelings_tracker.class));
+                                                if (isLoggedIn) {
+                                                    startActivity(new Intent(this, MainActivity.class));
+                                                } else {
+                                                    startActivity(new Intent(this, Login.class));
+                                                }
+
                                                 finish();
                                             })
                                             .start();

@@ -6,9 +6,8 @@ import androidx.lifecycle.LiveData;
 
 import com.example.feels.data.local.JournalDatabase;
 import com.example.feels.data.local.dao.JournalDao;
-import com.example.feels.data.local.dao.User_Dao;
 import com.example.feels.data.local.entities.JournalEntry;
-import com.example.feels.data.local.entities.User;
+
 
 import java.util.Calendar;
 import java.util.Date;
@@ -18,17 +17,15 @@ import java.util.concurrent.Executors;
 
 public class FeelsRepository {
     private final JournalDao journalDao;
-    private final User_Dao userDao;
     private final Executor executor;
 
     public FeelsRepository(Application application) {
         JournalDatabase database = JournalDatabase.getInstance(application);
         journalDao = database.journalDao();
-        userDao = database.userDao();
         executor = Executors.newSingleThreadExecutor();
     }
 
-    // Journal operations
+    // Journal operations (no user ID)
     public void insert(JournalEntry entry, OnInsertCompleteListener listener) {
         executor.execute(() -> {
             long id = journalDao.insert(entry);
@@ -36,11 +33,11 @@ public class FeelsRepository {
         });
     }
 
-    public LiveData<List<JournalEntry>> getAllEntries(int userId) {
-        return journalDao.getAllEntries(userId);
+    public LiveData<List<JournalEntry>> getAllEntries() {
+        return journalDao.getAllEntries();
     }
 
-    public LiveData<List<JournalEntry>> getEntriesForDay(Date date, int userId) {
+    public LiveData<List<JournalEntry>> getEntriesForDay(Date date) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.set(Calendar.HOUR_OF_DAY, 0);
@@ -49,14 +46,14 @@ public class FeelsRepository {
         cal.add(Calendar.DATE, 1);
         Date end = cal.getTime();
 
-        return journalDao.getEntriesByDate(start, end, userId);
+        return journalDao.getEntriesByDate(start, end);
     }
 
-    public LiveData<Integer> getTotalEntries(int userId) {
-        return journalDao.getTotalEntriesCount(userId);
+    public LiveData<Integer> getTotalEntries() {
+        return journalDao.getTotalEntriesCount();
     }
 
-    public LiveData<Integer> getThisWeekEntriesCount(int userId) {
+    public LiveData<Integer> getThisWeekEntriesCount() {
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
         Date start = cal.getTime();
@@ -64,45 +61,15 @@ public class FeelsRepository {
         cal.add(Calendar.DATE, 6);
         Date end = cal.getTime();
 
-        return journalDao.getWeeklyEntriesCount(start, end, userId);
+        return journalDao.getWeeklyEntriesCount(start, end);
     }
 
     public void deleteAllEntries() {
         executor.execute(journalDao::deleteAll);
     }
 
-    // User operations
-    public void insertUser(User user, OnInsertCompleteListener listener) {
-        executor.execute(() -> {
-            long id = userDao.insert(user);
-            listener.onComplete(id);
-        });
-    }
-
-    public void emailExists(String email, OnEmailCheckListener listener) {
-        executor.execute(() -> {
-            int count = userDao.emailExists(email);
-            listener.onResult(count > 0);
-        });
-    }
-
-    public void getUserByEmail(String email, OnUserFetchListener listener) {
-        executor.execute(() -> {
-            User user = userDao.getUserByEmail(email);
-            listener.onUserFetched(user);
-        });
-    }
-
-    // Interfaces
+    // Interface remains the same
     public interface OnInsertCompleteListener {
         void onComplete(long id);
-    }
-
-    public interface OnEmailCheckListener {
-        void onResult(boolean exists);
-    }
-
-    public interface OnUserFetchListener {
-        void onUserFetched(User user);
     }
 }
