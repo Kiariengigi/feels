@@ -10,6 +10,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.animation.ValueAnimator;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import java.util.Random;
 
@@ -73,6 +74,45 @@ public class CircleView extends View {
         animator.start();
     }
 
+    public interface OnColorChangeListener {
+        void onColorChanged(int color);
+    }
+
+    private OnColorChangeListener colorChangeListener;
+
+    public void setOnColorChangeListener(OnColorChangeListener listener) {
+        this.colorChangeListener = listener;
+    }
+
+
+
+
+    public void setColors(int[] newColors) {
+        if (circles == null || newColors == null || newColors.length == 0) return;
+
+        for (int i = 0; i < circles.length; i++) {
+            final Circle circle = circles[i];
+            int startColor = circle.color;
+            int endColor = newColors[i % newColors.length];
+
+            ValueAnimator colorAnimator = ValueAnimator.ofArgb(startColor, endColor);
+            colorAnimator.setDuration(600); // adjust for smoother/faster transition
+            colorAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+
+            colorAnimator.addUpdateListener(animation -> {
+                int animatedColor = (int) animation.getAnimatedValue();
+                circle.color = animatedColor;
+                circle.paint.setColor(animatedColor);
+                invalidate(); // redraw view
+            });
+
+            colorAnimator.start();
+        }
+    }
+
+
+
+
     private void updatePositions() {
         float w = getWidth();
         float h = getHeight();
@@ -96,10 +136,29 @@ public class CircleView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+
+        // Draw blurry animated circles
         for (Circle c : circles) {
             canvas.drawCircle(c.x, c.y, c.radius, c.paint);
         }
+
+        // Draw color selection preview circles at bottom
+        Paint paint = new Paint();
+        paint.setAntiAlias(true);
+        int radius = 50;
+        int padding = 20;
+        int x = radius + padding;
+        int y = getHeight() - radius - padding; // Draw near bottom
+
+// Notify activity
+        if (colorChangeListener != null && circles.length > 0) {
+            colorChangeListener.onColorChanged(circles[0].color); // Or any other circle
+        }
+
+
+
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
