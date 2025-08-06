@@ -30,6 +30,7 @@
         android:layout_marginBottom="84dp"
         android:text="@string/feelings_btn"
         app:cornerRadius="10sp"
+        android:elevation="9dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"

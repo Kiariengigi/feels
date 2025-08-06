@@ -13,6 +13,10 @@
         android:theme="@style/Theme.Feels"
         tools:targetApi="31">
         <activity
+            android:name=".Journal"
+            android:exported="false"
+            android:theme="@style/Theme.Feels" />
+        <activity
             android:name=".Notebook"
             android:exported="false" />
         <activity
@@ -25,10 +29,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Feelings_tracker"></activity>
-        <activity android:name=".Login"></activity>
+        <activity android:name=".Feelings_tracker" />
+        <activity android:name=".Login" />
         <activity android:name=".Sign_Up" />
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" />
 
         <meta-data
             android:name="preloaded_fonts"

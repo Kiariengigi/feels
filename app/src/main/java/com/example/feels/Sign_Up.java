@@ -62,7 +62,7 @@ public class Sign_Up extends AppCompatActivity {
         textView.setMovementMethod(LinkMovementMethod.getInstance());
 
         // Signup button
-        findViewById(R.id.button).setOnClickListener(v -> handleSignup());
+        //findViewById(R.id.button).setOnClickListener(v -> handleSignup());
     }
 
     private void handleSignup() {

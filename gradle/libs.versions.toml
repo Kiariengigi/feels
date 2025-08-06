@@ -1,5 +1,5 @@
 [versions]
-agp = "8.11.1"
+agp = "8.10.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -8,9 +8,11 @@ material = "1.12.0"
 activity = "1.10.1"
 constraintlayout = "2.2.1"
 hilt = "2.51.1"
-room = "2.6.1"
-core = "1.13.1"
-desugar = "2.0.4"
+room = "2.7.2"
+core = "1.16.0"
+desugar = "2.1.5"
+navigationFragment = "2.9.2"
+navigationUi = "2.9.2"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -27,6 +29,8 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 core = { group = "androidx.core", name = "core-ktx", version.ref = "core" }
 desugar = { group = "com.android.tools", name = "desugar_jdk_libs", version.ref = "desugar" }
+navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigationFragment" }
+navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
