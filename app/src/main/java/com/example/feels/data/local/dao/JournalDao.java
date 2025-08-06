@@ -15,17 +15,17 @@ public interface JournalDao {
     @Insert
     long insert(JournalEntry entry);
 
-    @Query("SELECT * FROM journal_entries WHERE user_id = :userId")
-    LiveData<List<JournalEntry>> getAllEntries(int userId);
+    @Query("SELECT * FROM journal_entries") // Removed user_id filter
+    LiveData<List<JournalEntry>> getAllEntries();
 
-    @Query("SELECT * FROM journal_entries WHERE user_id = :userId AND date BETWEEN :start AND :end")
-    LiveData<List<JournalEntry>> getEntriesByDate(Date start, Date end, int userId);
+    @Query("SELECT * FROM journal_entries WHERE date BETWEEN :start AND :end") // Removed user_id
+    LiveData<List<JournalEntry>> getEntriesByDate(Date start, Date end);
 
-    @Query("SELECT COUNT(*) FROM journal_entries WHERE user_id = :userId")
-    LiveData<Integer> getTotalEntriesCount(int userId);
+    @Query("SELECT COUNT(*) FROM journal_entries") // Removed user_id
+    LiveData<Integer> getTotalEntriesCount();
 
-    @Query("SELECT COUNT(*) FROM journal_entries WHERE user_id = :userId AND date BETWEEN :start AND :end")
-    LiveData<Integer> getWeeklyEntriesCount(Date start, Date end, int userId);
+    @Query("SELECT COUNT(*) FROM journal_entries WHERE date BETWEEN :start AND :end") // Removed user_id
+    LiveData<Integer> getWeeklyEntriesCount(Date start, Date end);
 
     @Query("DELETE FROM journal_entries")
     void deleteAll();

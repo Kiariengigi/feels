@@ -10,10 +10,8 @@ import com.example.feels.data.local.converters.CategoryConverter;
 import com.example.feels.data.local.converters.DateConverter;
 import com.example.feels.data.local.converters.MoodConverter;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
+import java.util.Date;
 @Entity(tableName = "journal_entries")
 @TypeConverters({DateConverter.class, MoodConverter.class, CategoryConverter.class})
 public class JournalEntry {
@@ -41,27 +39,22 @@ public class JournalEntry {
     @NonNull
     private Category category;
 
-    @ColumnInfo(name = "user_id")
-    private int userId;  // Added for user-specific entries
-
-    // Updated constructor
+    // Updated constructor without user ID
     public JournalEntry(
             @NonNull String title,
             @NonNull String content,
             @NonNull Date date,
             @NonNull Mood mood,
-            @NonNull Category category,
-            int userId
+            @NonNull Category category
     ) {
         this.title = title;
         this.content = content;
         this.date = date;
         this.mood = mood;
         this.category = category;
-        this.userId = userId;
     }
 
-    // Getters and Setters
+    // Getters and Setters (no user ID)
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
@@ -80,20 +73,5 @@ public class JournalEntry {
     @NonNull
     public Date getDate() { return date; }
 
-    public int getUserId() { return userId; }
-    public void setUserId(int userId) { this.userId = userId; }
-
-    // Helper Methods
-    public String getMoodAsString() {
-        return mood != null ? mood.toString() : "Unknown";
-    }
-
-    public String getCategoryAsString() {
-        return category != null ? category.toString() : "Unknown";
-    }
-
-    public String getDateAsString() {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
-        return sdf.format(date);
-    }
+    // Helper methods remain the same
 }

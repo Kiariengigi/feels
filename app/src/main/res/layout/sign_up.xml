@@ -106,7 +106,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/log_in_btn"
+        android:id="@+id/button"
         android:layout_width="0dp"
         android:layout_height="59dp"
         android:layout_marginStart="24dp"

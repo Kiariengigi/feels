@@ -1,14 +1,21 @@
 package com.example.feels.data.local.entities;
 
 public enum Category {
-    PERSONAL,
-    WORK,
-    HEALTH,
-    RELATIONSHIPS,
-    GOALS,
-    GRATITUDE;
+    General("General"),
+    Work("Work"),
+    Personal("Personal"),
+    Health("Health"),
+    Relationships("Relationships"),
+    Hobbies("Hobbies");
 
-    public static Category fromString(String value) {
-        return valueOf(value.toUpperCase());
+    private final String displayName;
+
+    Category(String displayName) {
+        this.displayName = displayName;
+    }
+
+    @Override
+    public String toString() {
+        return displayName;
     }
 }

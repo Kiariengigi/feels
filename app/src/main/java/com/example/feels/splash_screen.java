@@ -1,18 +1,16 @@
 package com.example.feels;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.ImageView;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.Color;
+
+import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class splash_screen extends AppCompatActivity {
 
@@ -56,16 +54,8 @@ public class splash_screen extends AppCompatActivity {
                                                 colorAnim.start();
                                             })
                                             .withEndAction(() -> {
-                                                // ✅ Now check login state *after* animation finishes
-                                                SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-                                                boolean isLoggedIn = false;
-
-                                                if (isLoggedIn) {
-                                                    startActivity(new Intent(this, MainActivity.class));
-                                                } else {
-                                                    startActivity(new Intent(this, Login.class));
-                                                }
-
+                                                // Navigate directly to MainActivity
+                                                startActivity(new Intent(splash_screen.this, Notebook.class));
                                                 finish();
                                             })
                                             .start();
