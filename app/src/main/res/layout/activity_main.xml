@@ -7,16 +7,19 @@
     android:layout_height="match_parent">
 
     <!-- Centered vertical LinearLayout -->
+
     <LinearLayout
         android:id="@+id/centerContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_width="316dp"
+        android:layout_height="547dp"
         android:gravity="center_horizontal"
-        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.494"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.619">
 
         <!-- Title -->
         <TextView
@@ -29,11 +32,6 @@
             android:textStyle="bold" />
 
         <!-- RecyclerView -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/carouselRecyclerView"
-            android:layout_width="300dp"
-            android:layout_height="200dp"
-            android:layout_marginTop="16dp" />
 
         <!-- Calendar Section -->
         <LinearLayout
@@ -53,9 +51,15 @@
                 android:id="@+id/calendarSummary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="No entry selected"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                android:text="No entry selected" />
         </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/carouselRecyclerView"
+            android:layout_width="300dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="16dp" />
 
     </LinearLayout>
 

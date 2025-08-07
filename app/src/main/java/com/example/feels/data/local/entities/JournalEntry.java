@@ -11,7 +11,10 @@ import com.example.feels.data.local.converters.DateConverter;
 import com.example.feels.data.local.converters.MoodConverter;
 
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
+
 @Entity(tableName = "journal_entries")
 @TypeConverters({DateConverter.class, MoodConverter.class, CategoryConverter.class})
 public class JournalEntry {
@@ -73,5 +76,12 @@ public class JournalEntry {
     @NonNull
     public Date getDate() { return date; }
 
-    // Helper methods remain the same
+    public String getDateAsString() {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+        return sdf.format(date);
+    }
+
+    public String getMoodAsString() {
+        return mood.toString().replace("_", " ");
+    }
 }

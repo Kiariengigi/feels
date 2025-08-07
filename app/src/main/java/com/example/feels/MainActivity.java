@@ -2,20 +2,28 @@ package com.example.feels;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SnapHelper;
 
+import com.example.feels.data.local.entities.JournalEntry;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private CarouselAdapter adapter;
+    private EntryViewModel viewModel;
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,44 +31,55 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        // 👉 Always initialize views first
+        // Initialize ViewModel
+        viewModel = new ViewModelProvider(this).get(EntryViewModel.class);
+
+        // Setup RecyclerView
         RecyclerView recyclerView = findViewById(R.id.carouselRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
-        // 👉 Get data from intent
-        String date = getIntent().getStringExtra("date");
-        String emotion = getIntent().getStringExtra("emotion");
-        String summary = getIntent().getStringExtra("essay");
-
-        // 🔁 Build carousel items
-        List<CarouselItem> itemList = new ArrayList<>();
-
-        if (date != null && emotion != null && summary != null) {
-            String title = date;
-            String subtitle = emotion;
-            String description = summary;
-            itemList.add(new CarouselItem(title, subtitle, description)); // Use a default icon or one passed via intent
-        } else {
-            itemList.add(new CarouselItem("No journal entries yet","No subtitle", "No description"));
-        }
-
-        // 👉 Set adapter
-        CarouselAdapter adapter = new CarouselAdapter(this, itemList); // 'this' is the context
+        // Initialize adapter with empty list
+        adapter = new CarouselAdapter(this, new ArrayList<>());
         recyclerView.setAdapter(adapter);
 
-        // 👉 Snap scrolling behavior
+        // Observe LiveData from ViewModel
+        viewModel.getAllEntries().observe(this, entries -> {
+            Log.d(TAG, "Received entries: " + (entries != null ? entries.size() : 0));
+
+            if (entries != null && !entries.isEmpty()) {
+                List<CarouselItem> carouselItems = new ArrayList<>();
+                for (JournalEntry entry : entries) {
+                    carouselItems.add(new CarouselItem(
+                            entry.getDateAsString(),
+                            entry.getMoodAsString(),
+                            entry.getContent()
+                    ));
+                }
+                adapter.setItems(carouselItems);
+                Log.d(TAG, "Updated adapter with " + carouselItems.size() + " items");
+            } else {
+                Log.d(TAG, "No entries found or entries list is empty");
+                // Show empty state or keep empty list
+                adapter.setItems(new ArrayList<>());
+            }
+        });
+
+        // Snap scrolling behavior
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
 
+        // Plus button click handler
         Button button3 = findViewById(R.id.button2);
-        button3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, Feelings_tracker.class);
-                startActivity(intent);
-            }
+        button3.setOnClickListener(v -> {
+            startActivity(new Intent(MainActivity.this, Feelings_tracker.class));
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume called - refreshing data");
+        // Refresh data when returning to this activity
+        viewModel.refreshData();
+    }
 }
-

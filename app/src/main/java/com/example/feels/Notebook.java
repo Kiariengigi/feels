@@ -3,28 +3,29 @@ package com.example.feels;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.feels.data.local.entities.Category;
+import com.example.feels.data.local.entities.JournalEntry;
+import com.example.feels.data.local.entities.Mood;
+import com.example.feels.data.local.repository.FeelsRepository;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Notebook extends AppCompatActivity {
 
-    public String getTodayDate_short() {
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
-        Date now = new Date();
-        return sdf.format(now);
-    }
-
-    public String getTodayDate() {
-        SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd yyyy");
-        Date now = new Date();
-        return sdf.format(now);
-    }
+    private Mood selectedMood;
+    private Category selectedCategory = Category.General;
+    private FeelsRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,67 +33,98 @@ public class Notebook extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_notebook);
 
-        // Set sentiment
+        // Initialize repository
+        repository = new FeelsRepository(getApplication());
+
+        // Get sentiment from intent
         String sentiment = getIntent().getStringExtra("selected_sentiment");
+        selectedMood = mapStringToMood(sentiment);
+
+        // Set UI elements
         TextView sentimentView = findViewById(R.id.emotion);
+        TextView dayView = findViewById(R.id.Day);
+        TextView dateView = findViewById(R.id.short_date);
+
         sentimentView.setText(sentiment);
+        dayView.setText(getTodayDate_short());
+        dateView.setText(getTodayDate());
 
-        // Set date
-        TextView day = findViewById(R.id.Day);
-        TextView long_day = findViewById(R.id.short_date);
-        day.setText(getTodayDate_short());
-        long_day.setText(getTodayDate());
 
-        // Setup onClick for a button
+
+
+        // Set button colors based on mood
         Button submitButton = findViewById(R.id.button2);
-        Button smButton = findViewById(R.id.button3);// Make sure your layout has this ID
+        Button smButton = findViewById(R.id.button3);
+        setButtonColors(submitButton, smButton, sentimentView, sentiment);
 
-        switch (sentiment){
-            case "Very Negative":
-                submitButton.setBackgroundColor(getResources().getColor(R.color.very_negative_color));
-                sentimentView.setTextColor(getResources().getColor(R.color.very_negative_color));
-                smButton.setBackgroundColor(getResources().getColor(R.color.very_negative_color));
-                break;
-                case "Negative":
-                submitButton.setBackgroundColor(getResources().getColor(R.color.negative_color));
-                sentimentView.setTextColor(getResources().getColor(R.color.negative_color));
-                smButton.setBackgroundColor(getResources().getColor(R.color.negative_color));
-                break;
-                case "Neutral":
-                submitButton.setBackgroundColor(getResources().getColor(R.color.neutral_color));
-                sentimentView.setTextColor(getResources().getColor(R.color.neutral_color));
-                smButton.setBackgroundColor(getResources().getColor(R.color.neutral_color));
-                break;
-                case "Positive":
-                submitButton.setBackgroundColor(getResources().getColor(R.color.positive_color));
-                sentimentView.setTextColor(getResources().getColor(R.color.positive_color));
-                smButton.setBackgroundColor(getResources().getColor(R.color.positive_color));
-                break;
-                case "Very Positive":
-                submitButton.setBackgroundColor(getResources().getColor(R.color.very_positive_color));
-                sentimentView.setTextColor(getResources().getColor(R.color.very_positive_color));
-                smButton.setBackgroundColor(getResources().getColor(R.color.very_positive_color));
-                break;
+        // Save to database on submit
+        submitButton.setOnClickListener(v -> saveJournalEntry());
+    }
+
+    private void setButtonColors(Button submitButton, Button smButton,
+                                 TextView sentimentView, String sentiment) {
+        int colorRes = getColorForMood(sentiment);
+        int color = getResources().getColor(colorRes);
+
+        submitButton.setBackgroundColor(color);
+        sentimentView.setTextColor(color);
+        smButton.setBackgroundColor(color);
+    }
+
+    private int getColorForMood(String sentiment) {
+        if (sentiment == null) return R.color.default_color;
+
+        switch (sentiment) {
+            case "Very Negative": return R.color.very_negative_color;
+            case "Negative": return R.color.negative_color;
+            case "Neutral": return R.color.neutral_color;
+            case "Positive": return R.color.positive_color;
+            case "Very Positive": return R.color.very_positive_color;
+            default: return R.color.default_color;
         }
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                TextView editText = findViewById(R.id.editTextTextMultiLine);
-                TextView editText2 = findViewById(R.id.emotion);
-                TextView editText3 = findViewById(R.id.Day);
-                TextView editText4 = findViewById(R.id.short_date);
-                String essay = editText.getText().toString();
-                String emotion = editText2.getText().toString();
-                String day = editText3.getText().toString();
-                String date = editText4.getText().toString();
+    }
 
-                Intent intent = new Intent(Notebook.this, MainActivity.class);
-                intent.putExtra("essay", essay);
-                intent.putExtra("emotion", emotion);
-                intent.putExtra("day", day);
-                intent.putExtra("date", date);
-                startActivity(intent);
-            }
+    private Mood mapStringToMood(String sentiment) {
+        if (sentiment == null) return Mood.Neutral;
+        switch (sentiment) {
+            case "Very Negative": return Mood.Very_Negative;
+            case "Negative": return Mood.Negative;
+            case "Neutral": return Mood.Neutral;
+            case "Positive": return Mood.Positive;
+            case "Very Positive": return Mood.Very_Positive;
+            default: return Mood.Neutral;
+        }
+    }
+
+    private void saveJournalEntry() {
+        EditText contentEditText = findViewById(R.id.editTextTextMultiLine);
+        String content = contentEditText.getText().toString();
+        Date currentDate = new Date();
+
+        // Create journal entry
+        JournalEntry entry = new JournalEntry(
+                "Journal Entry", // Default title
+                content,
+                currentDate,
+                selectedMood,
+                selectedCategory
+        );
+
+        // Save to database
+        repository.insert(entry, id -> {
+            // Navigate back to MainActivity after save
+            runOnUiThread(() -> {
+                startActivity(new Intent(Notebook.this, MainActivity.class));
+                finish();
+            });
         });
+    }
+
+    private String getTodayDate_short() {
+        return new SimpleDateFormat("EEEE").format(new Date());
+    }
+
+    private String getTodayDate() {
+        return new SimpleDateFormat("MMMM dd yyyy").format(new Date());
     }
 }
