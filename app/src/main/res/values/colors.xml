@@ -3,4 +3,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="initial_color">#FF6200EE</color>
+    <color name="very_negative_color">#FFCDD2</color>
+    <color name="negative_color">#EF9A9A</color>
+    <color name="neutral_color">#E0E0E0</color>
+    <color name="positive_color">#A5D6A7</color>
+    <color name="very_positive_color">#81C784</color>
+    <color name="default_color">#FFFFFF</color>
+
 </resources>

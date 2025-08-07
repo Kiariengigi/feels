@@ -44,7 +44,36 @@ public class Notebook extends AppCompatActivity {
         long_day.setText(getTodayDate());
 
         // Setup onClick for a button
-        Button submitButton = findViewById(R.id.Submit_btn); // Make sure your layout has this ID
+        Button submitButton = findViewById(R.id.button2);
+        Button smButton = findViewById(R.id.button3);// Make sure your layout has this ID
+
+        switch (sentiment){
+            case "Very Negative":
+                submitButton.setBackgroundColor(getResources().getColor(R.color.very_negative_color));
+                sentimentView.setTextColor(getResources().getColor(R.color.very_negative_color));
+                smButton.setBackgroundColor(getResources().getColor(R.color.very_negative_color));
+                break;
+                case "Negative":
+                submitButton.setBackgroundColor(getResources().getColor(R.color.negative_color));
+                sentimentView.setTextColor(getResources().getColor(R.color.negative_color));
+                smButton.setBackgroundColor(getResources().getColor(R.color.negative_color));
+                break;
+                case "Neutral":
+                submitButton.setBackgroundColor(getResources().getColor(R.color.neutral_color));
+                sentimentView.setTextColor(getResources().getColor(R.color.neutral_color));
+                smButton.setBackgroundColor(getResources().getColor(R.color.neutral_color));
+                break;
+                case "Positive":
+                submitButton.setBackgroundColor(getResources().getColor(R.color.positive_color));
+                sentimentView.setTextColor(getResources().getColor(R.color.positive_color));
+                smButton.setBackgroundColor(getResources().getColor(R.color.positive_color));
+                break;
+                case "Very Positive":
+                submitButton.setBackgroundColor(getResources().getColor(R.color.very_positive_color));
+                sentimentView.setTextColor(getResources().getColor(R.color.very_positive_color));
+                smButton.setBackgroundColor(getResources().getColor(R.color.very_positive_color));
+                break;
+        }
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

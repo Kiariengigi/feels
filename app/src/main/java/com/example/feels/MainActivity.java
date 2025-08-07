@@ -1,6 +1,9 @@
 package com.example.feels;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,18 +36,31 @@ public class MainActivity extends AppCompatActivity {
         List<CarouselItem> itemList = new ArrayList<>();
 
         if (date != null && emotion != null && summary != null) {
-            String title = date + " - " + emotion + ": " + summary;
-            itemList.add(new CarouselItem(title)); // Use a default icon or one passed via intent
+            String title = date;
+            String subtitle = emotion;
+            String description = summary;
+            itemList.add(new CarouselItem(title, subtitle, description)); // Use a default icon or one passed via intent
         } else {
-            itemList.add(new CarouselItem("No journal entries yet"));
+            itemList.add(new CarouselItem("No journal entries yet","No subtitle", "No description"));
         }
 
         // 👉 Set adapter
-        CarouselAdapter adapter = new CarouselAdapter(itemList);
+        CarouselAdapter adapter = new CarouselAdapter(this, itemList); // 'this' is the context
         recyclerView.setAdapter(adapter);
 
         // 👉 Snap scrolling behavior
         SnapHelper snapHelper = new PagerSnapHelper();
         snapHelper.attachToRecyclerView(recyclerView);
+
+        Button button3 = findViewById(R.id.button2);
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, Feelings_tracker.class);
+                startActivity(intent);
+            }
+        });
     }
+
 }
+

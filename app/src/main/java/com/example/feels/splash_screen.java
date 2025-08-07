@@ -63,7 +63,7 @@ public class splash_screen extends AppCompatActivity {
                                                 if (isLoggedIn) {
                                                     startActivity(new Intent(this, MainActivity.class));
                                                 } else {
-                                                    startActivity(new Intent(this, Login.class));
+                                                    startActivity(new Intent(this, Feelings_tracker.class));
                                                 }
 
                                                 finish();
